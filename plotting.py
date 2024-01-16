@@ -1,58 +1,64 @@
 import sys
-import os
-
 import pandas as pd
 import numpy as np
-from PyQt6 import QtWidgets, QtCore
-from PyQt6.QtWidgets import QMainWindow, QWidget, QVBoxLayout
+from PyQt6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QHBoxLayout, QWidget
 
-from pyqtgraph import PlotWidget
 import pyqtgraph as pg
-
 
 class PlotLayout(QWidget):
     def __init__(self, df):
         super().__init__()
+
         self.w = pg.GraphicsLayoutWidget()
         self.w.setBackground('w')
-        
-        self.p1 = self.w.addPlot(row=0, col=0)
-        self.p2 = self.w.addPlot(row=1, col=0)
-        self.p3 = self.w.addPlot(row=2, col=0)
+
+        # Create three subplots
+        self.p1 = self.w.addPlot(title="Plot 1")
+        self.p2 = self.w.addPlot(title="Plot 2")
+        self.p3 = self.w.addPlot(title="Plot 3")
+
+        # Set the subplots in a vertical arrangement
+        self.w.nextRow()  # Move to the next row
+        self.w.addItem(self.p1)
+        self.w.nextRow()  # Move to the next row
+        self.w.addItem(self.p2)
+        self.w.nextRow()  # Move to the next row
+        self.w.addItem(self.p3)
+
+        # Set the x-axis to be shared with plot1
         self.p2.setXLink(self.p1)
         self.p3.setXLink(self.p1)
-        self.p1.setAxisItems({'bottom': pg.DateAxisItem()})
-        self.p2.setAxisItems({'bottom': pg.DateAxisItem()})
-        self.p3.setAxisItems({'bottom': pg.DateAxisItem()})
+        # self.p2.setYLink(self.p1)
+        # self.p3.setYLink(self.p1)
 
         xlow = df.index[0]
         xhigh = df.index[-1]
         ylow = df['Low'].min()
         yhigh = df['High'].max()
         for p in [self.p1, self.p2, self.p3]:
+            p.setAxisItems({'bottom': pg.DateAxisItem()})
             p.setXRange(xlow, xhigh)
             p.setYRange(ylow, yhigh)
-        
+
         layout = QVBoxLayout()
         layout.addWidget(self.w)
         self.setLayout(layout)
 
 
 class MainWindow(QMainWindow):
+    def __init__(self, df):
+        super().__init__()
 
-    def __init__(self, df, *args, **kwargs):
-        super(MainWindow, self).__init__(*args, **kwargs)
+        self.plots = PlotLayout(df)
 
-        self.plotsWidget = PlotLayout(df)
-        self.setCentralWidget(self.plotsWidget)
-        
+        self.setCentralWidget(self.plots)
 
 def main(filename:str):
     df = pd.read_csv(filename, index_col='Datetime', parse_dates=True)
     df.index = df.index = df.index.astype(np.int64) // 10**9
     print(df.head())
     
-    app = QtWidgets.QApplication(sys.argv)
+    app = QApplication(sys.argv)
     main = MainWindow(df)
     main.show()
     sys.exit(app.exec())

@@ -60,4 +60,4 @@ def main(filename:str):
     
     
 if __name__ == '__main__':
-    main('/Users/ljp2/AlpacaCrypto/Data/20240111.csv')
+    main('./Data/20240111.csv')

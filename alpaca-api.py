@@ -101,8 +101,8 @@ def getHistoricalCryptoData(symbol, timeframe, start_date, end_date) ->pd.DataFr
     request_params = CryptoBarsRequest(
         symbol_or_symbols=symbol,
         timeframe=timeframe,
-        start_date=start_date,
-        end_date=end_date
+        start=start_date,
+        end=end_date
     )
     historical_data = client.get_crypto_bars(request_params)
     df = historical_data.df.loc[symbol]
@@ -122,11 +122,19 @@ def getLatestCryptoQuote(symbol):
 #     print(q.ask_price, q.bid_price)
 #     time.sleep(5
 
+
+
+# from datetime import datetime, timedelta
+# import pytz
+
+# new_york_tz = pytz.timezone('America/New_York')
+# ny_time = datetime.now(new_york_tz).replace(hour=9, minute=30, second=0, microsecond=0)
+    
 # df = getHistoricalCryptoData(
 #     symbol='BTC/USD',
 #     timeframe=TimeFrame(1, TimeFrameUnit.Minute),
-#     start_date=datetime(2024,1,11),
-#     end_date=datetime(2024,1,12)
+#     start_date=ny_time,
+#     end_date=ny_time + timedelta(minutes=30)
 # )
 
 # print(df.head())

@@ -1,6 +1,7 @@
 from keys import paper_apikey, paper_secretkey
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
+import pytz
 
 from alpaca.trading.client import TradingClient
 from alpaca.trading.requests import GetAssetsRequest
@@ -96,24 +97,36 @@ def closeAllPositionsAndOrders():
     positions = trading_client.close_all_positions(cancel_orders=True)
     return positions
 
-def getHistoricalCryptoData(symbol, timeframe, start_date, end_date) ->pd.DataFrame:
+def getLatestCryptoQuote(symbol):
+    client = CryptoHistoricalDataClient(apikey, secretkey)
+    request_params = CryptoLatestQuoteRequest(symbol_or_symbols=symbol)
+    latest_quote = client.get_crypto_latest_quote(request_params)
+    return latest_quote
+
+def getHistoricalCryptoData(symbol, timeframe, start, end) ->pd.DataFrame:
     client = CryptoHistoricalDataClient(apikey, secretkey)
     request_params = CryptoBarsRequest(
         symbol_or_symbols=symbol,
         timeframe=timeframe,
-        start=start_date,
-        end=end_date
+        start=start,
+        end=end
     )
     historical_data = client.get_crypto_bars(request_params)
     df = historical_data.df.loc[symbol]
     df.columns = [s.capitalize() for s in df.columns]
     return df[['Open', 'High', 'Low', 'Close']] 
 
-def getLatestCryptoQuote(symbol):
-    client = CryptoHistoricalDataClient(apikey, secretkey)
-    request_params = CryptoLatestQuoteRequest(symbol_or_symbols=symbol)
-    latest_quote = client.get_crypto_latest_quote(request_params)
-    return latest_quote
+def getLatestBar(symbol:str, bar_minutes:int):
+    utc_time = datetime.utcnow()
+    df = getHistoricalCryptoData(
+        symbol=symbol,
+        timeframe=TimeFrame.Minute,
+        start=utc_time - timedelta(minutes=2*bar_minutes),
+        end=utc_time 
+    )
+    return df.iloc[-bar_minutes:]
+
+
 
 # import time
 
@@ -139,4 +152,18 @@ def getLatestCryptoQuote(symbol):
 
 # print(df.head())
 # print(df.tail())
+
+t = datetime.now(pytz.timezone('America/New_York'))
+print(t.strftime('%Y-%m-%d %H:%M'))
+print(datetime.utcnow())
+
+for n in [1,5,10,15]:
+    print(n, '--------------')
+    try:
+        df = getLatestBar('BTC/USD', n)
+    except:
+        print('error')
+    print(df)
+    print('--------------')
+    print()
     

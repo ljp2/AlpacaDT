@@ -59,12 +59,12 @@ stream = CryptoDataStream(
     secret_key=API_SECRET,
 )
 symbol = "BTC/USD"
-async def handler(data):
+async def handler(data:Quote):
     global i
     i += 1
-    r = f"{str(type(data).__name__):5} {data}\n"
+    r = f"{data.timestamp}\t{data.bid_price:.2f}\t{data.ask_price:.2f}\n"
     print(r)
-    if i > 100:
+    if i > 5000:
          sys.exit()
     with open(file_path, 'a') as file:
         file.write(r)

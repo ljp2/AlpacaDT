@@ -1,7 +1,10 @@
 import sys
 from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QGridLayout, \
+    QVBoxLayout, QHBoxLayout, \
     QLabel, QTextEdit, QMessageBox, QDialogButtonBox
-from PyQt6.QtGui import QPixmap
+
+from plotwidget import Plots
+from commandswidget import Commands
 
 class App(QWidget):
 
@@ -19,30 +22,16 @@ class App(QWidget):
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
         
-        # Create widget for displaying graphics
-        self.graphic = QPixmap("image.png")
-        self.graphicLabel = QLabel()
-        self.graphicLabel.setPixmap(self.graphic)
         
-        # Create buttons
-        self.button1 = QPushButton('Button 1')
-        self.button2 = QPushButton('Button 2')  
+        self.plots = Plots()
+        self.commands = Commands()
         
-        self.button_box = QDialogButtonBox()
-        self.button_box.addButton(self.button1, QDialogButtonBox.ButtonRole.ActionRole)
-        self.button_box.addButton(self.button2, QDialogButtonBox.ButtonRole.ActionRole)
-        
-        # Create display
-        self.display = QTextEdit()
-        
-        # Set layout
-        grid = QGridLayout()
-        grid.addWidget(self.graphicLabel, 0, 0) 
-        grid.addWidget(self.button_box, 0, 1)
-        grid.addWidget(self.display, 2, 0, 1, 2)
-        
-        self.setLayout(grid)
-        
+
+        layout = QHBoxLayout()
+        layout.addWidget(self.plots)
+        layout.addWidget(self.commands)
+        self.setLayout(layout)  
+    
         self.show()
 
 if __name__ == '__main__':

@@ -5,6 +5,7 @@ from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QGridLayout, \
 
 from plotwidget import Plots
 from commandswidget import Commands
+from infowidget import Information
 
 class App(QWidget):
 
@@ -25,11 +26,18 @@ class App(QWidget):
         
         self.plots = Plots()
         self.commands = Commands()
+        self.infomation = Information()
         
 
         layout = QHBoxLayout()
         layout.addWidget(self.plots)
-        layout.addWidget(self.commands)
+        
+        layout_bc = QVBoxLayout()
+        layout_bc.addWidget(self.commands)
+        layout_bc.addStretch()
+        layout_bc.addWidget(self.infomation)
+        layout.addLayout(layout_bc)
+        
         self.setLayout(layout)  
     
         self.show()

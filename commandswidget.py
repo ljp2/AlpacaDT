@@ -17,20 +17,12 @@ class Commands(QWidget):
         self.button_3.clicked.connect(self.on_button_3_clicked)
         self.button_4.clicked.connect(self.on_button_4_clicked)
         
-        self.label_1 = QLabel("Label 1")
-        self.label_2 = QLabel("Label 2")
-        self.label_3 = QLabel("Label 3")
-        self.label_4 = QLabel("Label 4")
 
         layout.addWidget(self.button_1)
         layout.addWidget(self.button_2)
         layout.addWidget(self.button_3)  
         layout.addWidget(self.button_4)
-        layout.addStretch()
-        layout.addWidget(self.label_1)
-        layout.addWidget(self.label_2)  
-        layout.addWidget(self.label_3)
-        layout.addWidget(self.label_4)
+
         self.setLayout(layout)
 
 

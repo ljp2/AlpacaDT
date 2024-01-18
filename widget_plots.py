@@ -76,7 +76,10 @@ if __name__ == '__main__':
     
     
     app = QApplication(sys.argv)
-    main = Plots()
-    #xmain = Plots(xlimits=[xlow, xhigh], ylimits=[ylow, yhigh])
+    main = Plots(xlimits=[xlow, xhigh], ylimits=[ylow, yhigh])
+    
+    main.p1.plot(df.index, df['Close'].values, pen={'color': 'b', 'width': 2})
+    main.p2.plot(df.index, df['High'].values, pen={'color': 'g', 'width': 2})
+    main.p3.plot(df.index, df['Low'].values, pen={'color': 'r', 'width': 2})
     main.show()
     sys.exit(app.exec())

@@ -3,9 +3,9 @@ from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QGridLayout, \
     QVBoxLayout, QHBoxLayout, \
     QLabel, QTextEdit, QMessageBox, QDialogButtonBox
 
-from plotwidget import Plots
-from commandswidget import Commands
-from infowidget import Information
+from widget_plots import Plots
+from widget_commands import Commands
+from widget_info import Information
 
 class App(QWidget):
 

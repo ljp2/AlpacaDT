@@ -119,7 +119,7 @@ def getLatestCryptoQuote(symbol):
     return latest_quote
 
 
-def getHistoricalCryptoData(symbol, timeframe, start, end) -> pd.DataFrame:
+def getHistoricalCryptoBars(symbol, timeframe, start, end) -> pd.DataFrame:
     client = CryptoHistoricalDataClient(apikey, secretkey)
     request_params = CryptoBarsRequest(
         symbol_or_symbols=symbol, timeframe=timeframe, start=start, end=end
@@ -131,13 +131,13 @@ def getHistoricalCryptoData(symbol, timeframe, start, end) -> pd.DataFrame:
     return sdf
 
 
-def getLatestBar(symbol: str, bar_minutes: int):
+def getLatestCryptoBar(symbol: str, bar_minutes: int):
     num_tries = 0
     while num_tries < 5:
         end_time = datetime.utcnow()
         start_time = end_time - 2 * timedelta(minutes=bar_minutes)
         try:
-            minute_df = getHistoricalCryptoData(
+            minute_df = getHistoricalCryptoBars(
                 symbol=symbol, timeframe=TimeFrame.Minute, start=start_time, end=end_time
             )
         except:
@@ -162,18 +162,10 @@ def getLatestBar(symbol: str, bar_minutes: int):
             print("Failed to get data, trying again num_tries =", num_tries)
     return df
 
-
-if __name__ == "__main__":
-    from utils import toNewYorkTime, HHMM, dayHHMM
-
-    utc_now = datetime.utcnow()
-    print(dayHHMM(utc_now))
-
-    for n in [1, 5, 10, 15]:
-        print(n, "--------------")
-        try:
-            df = getLatestBar("BTC/USD", n)
-            print(df)
-        except:
-            print("None returned")
-        print("")
+def getRecentBars(n:int=60, timeframe=TimeFrame.Minute, symbol='BTC/USD'):
+    end_time = datetime.utcnow()
+    start_time = end_time - n * timedelta(minutes=1)
+    df = getHistoricalCryptoBars(
+        symbol=symbol, timeframe=timeframe, start=start_time, end=end_time
+    )
+    return df

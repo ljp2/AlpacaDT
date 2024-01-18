@@ -132,35 +132,39 @@ def getHistoricalCryptoData(symbol, timeframe, start, end) -> pd.DataFrame:
 
 
 def getLatestBar(symbol: str, bar_minutes: int):
-    end_time = datetime.utcnow()
-    start_time = end_time - 2 * timedelta(minutes=bar_minutes)
-    try:
-        minute_df = getHistoricalCryptoData(
-            symbol=symbol, timeframe=TimeFrame.Minute, start=start_time, end=end_time
-        )
-    except:
-        minute_df = None
-    if minute_df is not None:
-        given_datetime = start_time.replace(second=0, microsecond=0).replace(tzinfo=pytz.utc)
-        print('given_datetime', given_datetime)
-        minute_bars = minute_df[minute_df.index >= given_datetime]
-        Open = minute_bars.iloc[0]["Open"]
-        Close = minute_bars.iloc[-1]["Close"]
-        High = minute_bars["High"].max()
-        Low = minute_bars["Low"].min()
-        index = minute_bars.index[0]
-        df = pd.DataFrame(
-            {"Open": [Open], "High": [High], "Low": [Low], "Close": [Close]},
-            index=[index],
-        )
+    num_tries = 0
+    while num_tries < 5:
+        end_time = datetime.utcnow()
+        start_time = end_time - 2 * timedelta(minutes=bar_minutes)
+        try:
+            minute_df = getHistoricalCryptoData(
+                symbol=symbol, timeframe=TimeFrame.Minute, start=start_time, end=end_time
+            )
+        except:
+            minute_df = None
+        if minute_df is not None:
+            given_datetime = start_time.replace(second=0, microsecond=0).replace(tzinfo=pytz.utc)
+            print('given_datetime', given_datetime)
+            minute_bars = minute_df[minute_df.index >= given_datetime]
+            Open = minute_bars.iloc[0]["Open"]
+            Close = minute_bars.iloc[-1]["Close"]
+            High = minute_bars["High"].max()
+            Low = minute_bars["Low"].min()
+            index = minute_bars.index[0]
+            df = pd.DataFrame(
+                {"Open": [Open], "High": [High], "Low": [Low], "Close": [Close]},
+                index=[index],
+            )
+        if df is not None:
+            break
+        else:
+            num_tries += 1
+            print("Failed to get data, trying again num_tries =", num_tries)
     return df
 
 
 if __name__ == "__main__":
     from utils import toNewYorkTime, HHMM, dayHHMM
-
-    # tnow_ny = datetime.now(pytz.timezone("America/New_York"))
-    # print(tnow_ny.strftime("%Y-%m-%d %H:%M"))
 
     utc_now = datetime.utcnow()
     print(dayHHMM(utc_now))

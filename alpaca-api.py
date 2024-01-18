@@ -1,5 +1,6 @@
 from keys import paper_apikey, paper_secretkey
 import pandas as pd
+import numpy as np
 from datetime import datetime, timedelta
 import pytz
 
@@ -140,7 +141,9 @@ def getLatestBar(symbol: str, bar_minutes: int):
     except:
         minute_df = None
     if minute_df is not None:
-        minute_bars = minute_df.iloc[-bar_minutes:]
+        given_datetime = start_time.replace(second=0, microsecond=0).replace(tzinfo=pytz.utc)
+        print('given_datetime', given_datetime)
+        minute_bars = minute_df[minute_df.index >= given_datetime]
         Open = minute_bars.iloc[0]["Open"]
         Close = minute_bars.iloc[-1]["Close"]
         High = minute_bars["High"].max()
@@ -156,8 +159,8 @@ def getLatestBar(symbol: str, bar_minutes: int):
 if __name__ == "__main__":
     from utils import toNewYorkTime, HHMM, dayHHMM
 
-    tnow_ny = datetime.now(pytz.timezone("America/New_York"))
-    print(tnow_ny.strftime("%Y-%m-%d %H:%M"))
+    # tnow_ny = datetime.now(pytz.timezone("America/New_York"))
+    # print(tnow_ny.strftime("%Y-%m-%d %H:%M"))
 
     utc_now = datetime.utcnow()
     print(dayHHMM(utc_now))

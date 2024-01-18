@@ -10,4 +10,3 @@ def HHMM(dt):
 
 def dayHHMM(dt):
     return dt.strftime('%m-%d %H:%M')
-

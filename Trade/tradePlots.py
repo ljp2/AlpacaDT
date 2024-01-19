@@ -1,11 +1,14 @@
 import sys
 import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pandas as pd
 import numpy as np
 
 from datetime import datetime, time
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
+from PyQt6.QtGui import QColor, QPen
 import pyqtgraph as pg
+import utils
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import alpaca_api
@@ -18,22 +21,11 @@ class Plots(QWidget):
         
     def setupPlots(self, xlimits=None, ylimits=None):
         
+        xlow, xhigh = utils.todayStartEndUTC()
+        bar = alpaca_api.getLatestCryptoBar('BTC/USD', 60*24)
+        ylow = bar['Low'][0]
+        yhigh = bar['High'][0]
         
-        if xlimits is None:
-            xlow = np.datetime64(datetime.combine(datetime.now().date(), 
-                                                  time(0, 0, 0))).astype(np.int64) // 10**6
-            xhigh = np.datetime64(datetime.combine(datetime.now().date(), 
-                                                   time(23, 59, 0))).astype(np.int64) // 10**6
-        else:
-            xlow = xlimits[0]
-            xhigh = xlimits[1]
-        if ylimits is None:
-            ylow = 45000
-            yhigh = 46000
-        else:
-            ylow = ylimits[0]
-            yhigh = ylimits[1]
-
         self.w = pg.GraphicsLayoutWidget()
         self.w.setBackground('w')
 
@@ -57,7 +49,7 @@ class Plots(QWidget):
         # self.p3.setYLink(self.p1)
 
         for p in [self.p1, self.p2, self.p3]:
-            p.setAxisItems({'bottom': pg.DateAxisItem()})
+            # p.setAxisItems({'bottom': pg.DateAxisItem()})
             p.setXRange(xlow, xhigh)
             p.setYRange(ylow, yhigh)
 
@@ -67,14 +59,11 @@ class Plots(QWidget):
         
     def plotFirstData(self):
         df = alpaca_api.getRecentBars()
-        x = df.index
+        x = df.index.tz_localize(None).astype(np.int64) // 10**9
         y = df['Close'].values
-        self.p1.plot(x,y, pen='b')
-        self.p2.plot(x,y, pen='b')
-        self.p3.plot(x,y, pen='b')
-        
-        # self.p1.plot(df.index, df['Close'], pen='b')
-        # self.p2.plot(df.index, df['High'], pen='g')
-        # self.p3.plot(df.index, df['Low'], pen='r')
-        
     
+        pen = pg.mkPen(color='k', width=5)
+        self.p1.plot(x,y, pen=pen)
+        self.p2.plot(x,y, pen=pen)
+        self.p3.plot(x,y,pen=pen)
+        

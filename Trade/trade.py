@@ -4,6 +4,7 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QLabel, QVBoxLayout, QHBoxLayout 
+from PyQt6.QtGui import QPalette, QColor
 
 from tradePlots import Plots
 from tradeCommands import Commands

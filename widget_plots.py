@@ -68,7 +68,7 @@ class Plots(QWidget):
 if __name__ == '__main__':
     filename = './Data/20240111.csv'
     df = pd.read_csv(filename, index_col='Datetime', parse_dates=True)
-    df.index = df.index = df.index.astype(np.int64) // 10**9
+    df.index = df.index.astype(np.int64) // 10**9
     xlow = df.index[0]
     xhigh = df.index[-1]
     ylow = df['Low'].min()

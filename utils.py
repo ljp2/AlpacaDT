@@ -16,13 +16,6 @@ def datetimeAwareUTC(year, month, day, hour=0, minute=0, sec=0):
     t = utc.localize(t)
     return t
 
-def todayStartEndUTC():
-    today_start = pd.Timestamp('today').normalize()
-    today_end = today_start + pd.Timedelta(days=1) - pd.Timedelta(seconds=1)
-    today_start = int(today_start.timestamp())
-    today_end = int(today_end.timestamp())
-    return today_start, today_end
-
 def toEasternAware(dt):
     return dt.astimezone(pytz.timezone('America/New_York'))
 

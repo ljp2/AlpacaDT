@@ -4,7 +4,8 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pandas as pd
 import numpy as np
 
-from datetime import datetime, time
+from datetime import datetime
+import time
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
 from PyQt6.QtGui import QColor, QPen
 import pyqtgraph as pg
@@ -21,7 +22,9 @@ class Plots(QWidget):
         
     def setupPlots(self, xlimits=None, ylimits=None):
         
-        xlow, xhigh = utils.todayStartEndUTC()
+        current_timestamp = int(time.time())
+        xlow = current_timestamp - 60*60
+        xhigh = current_timestamp + 2*60*60
         bar = alpaca_api.getLatestCryptoBar('BTC/USD', 60*24)
         ylow = bar['Low'][0]
         yhigh = bar['High'][0]
@@ -49,7 +52,8 @@ class Plots(QWidget):
         # self.p3.setYLink(self.p1)
 
         for p in [self.p1, self.p2, self.p3]:
-            # p.setAxisItems({'bottom': pg.DateAxisItem()})
+            p.hideAxis('left')
+            p.setAxisItems({'bottom': pg.DateAxisItem(), 'right': pg.AxisItem('right')})
             p.setXRange(xlow, xhigh)
             p.setYRange(ylow, yhigh)
 
